@@ -8,7 +8,6 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebase";
-import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 
@@ -18,7 +17,6 @@ const Login = () => {
   const email = useRef(null);
   const password = useRef(null);
   const name = useRef(null);
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const toggleSignInForm = () => {
@@ -34,17 +32,15 @@ const Login = () => {
         password.current.value
       )
         .then((userCredential) => {
-          // Signed up
           const user = userCredential.user;
           updateProfile(user, {
-            displayName: name.current.value,
+            displayName: name?.current?.value,
           })
             .then(() => {
               const { uid, email, displayName } = auth.currentUser;
               dispatch(
                 addUser({ uid: uid, email: email, displayName: displayName })
               );
-              navigate("/browser");
             })
             .catch((err) => {
               setErrorMsg(err.message);
@@ -62,11 +58,8 @@ const Login = () => {
         password.current.value
       )
         .then((userCredential) => {
-          // Signed in
           const user = userCredential.user;
-
-          navigate("/browser");
-          console.log("Sign In", user);
+          console.log("user", user);
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -74,7 +67,6 @@ const Login = () => {
           setErrorMsg(errorCode + "-" + errorMessage);
         });
     }
-    //console.log("submit DATa", email.current.value, password.current.value);
   };
   return (
     <div className="relative h-screen w-screen">
